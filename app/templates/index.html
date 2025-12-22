@@ -5,14 +5,15 @@
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-<div class="container">
-    <h1>GSPCB AQI Excel Processor</h1>
+<div class="box">
+    <h2>GSPCB AQI Data Processor</h2>
 
     <form id="uploadForm">
-        <input type="file" name="files" multiple required />
-        <button type="submit">Generate Result</button>
+        <input type="file" name="files" multiple required>
+        <button type="submit">Process Data</button>
     </form>
 
+    <button id="downloadBtn" style="display:none;">Download Result</button>
     <p id="status"></p>
 </div>
 
