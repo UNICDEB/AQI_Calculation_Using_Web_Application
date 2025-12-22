@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+from io import BytesIO
 from datetime import datetime
 from address_mapping import address_mapping
 
@@ -20,7 +21,7 @@ def smart_round(val):
     except:
         return None
 
-def process_folder(folder_path):
+def process_folder_in_memory(folder_path):
     results = []
 
     for file in os.listdir(folder_path):
@@ -29,27 +30,25 @@ def process_folder(folder_path):
 
         device = os.path.splitext(file)[0]
         location = address_mapping.get(device, "Unknown Location")
+
         df = pd.read_excel(os.path.join(folder_path, file), skiprows=6, header=None)
 
         df.columns = (
-            ['Time'] +
-            direct_ugm3_cols[:3] +
-            [f'{g} (ug/m3)' for g in ppb_gases] +
-            ['CO2 (ppm)'] +
-            env_cols +
-            [direct_ugm3_cols[-1]]
+            ['Time']
+            + direct_ugm3_cols[:3]
+            + [f'{g} (ug/m3)' for g in ppb_gases]
+            + ['CO2 (ppm)']
+            + env_cols
+            + [direct_ugm3_cols[-1]]
         )
 
         df['Time'] = pd.to_datetime(df['Time'], errors='coerce')
         df.dropna(subset=['Time'], inplace=True)
-
         if df.empty:
             continue
 
         df['Hour'] = df['Time'].dt.hour
         date_val = df['Time'].dt.date.iloc[0]
-
-        final_cols = df.columns.drop(['Time', 'Hour'])
 
         for slot, (s, e) in time_ranges.items():
             dslot = df[(df['Hour'] >= s) & (df['Hour'] < e)]
@@ -63,13 +62,19 @@ def process_folder(folder_path):
                 "Time Slot": slot
             }
 
-            for col in final_cols:
+            for col in df.columns.drop(['Time', 'Hour']):
                 row[f"{col} Min"] = smart_round(dslot[col].min())
                 row[f"{col} Max"] = smart_round(dslot[col].max())
 
             results.append(row)
 
     result_df = pd.DataFrame(results)
-    out_name = f"GSPCB_{datetime.now().strftime('%Y%m%d')}.xlsx"
-    result_df.to_excel(out_name, index=False)
-    return out_name
+
+    output = BytesIO()
+    with pd.ExcelWriter(output, engine="openpyxl") as writer:
+        result_df.to_excel(writer, index=False)
+
+    output.seek(0)
+    filename = f"GSPCB_{datetime.now().strftime('%Y%m%d')}.xlsx"
+
+    return output, filename
