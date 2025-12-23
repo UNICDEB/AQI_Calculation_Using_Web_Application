@@ -1,4 +1,4 @@
-# 🌏 GSPCB AQI Data Processing Web Application
+# 🌏 AQI Data Processing Web Application
 
 A premium, responsive web-based system developed using **FastAPI** for processing Air Quality Monitoring Excel data.  
 The application allows users to upload multiple Excel files or a ZIP file, processes the data **in memory only**, and generates a consolidated **time-slot based AQI summary report**, which can be downloaded directly by the user.
