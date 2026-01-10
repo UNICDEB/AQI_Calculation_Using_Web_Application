@@ -39,7 +39,7 @@ The application allows users to upload multiple Excel files or a ZIP file, proce
 
 ## 📁 Project Folder Structure
 
-GSPCB_AQI_Web_App/
+AQI_Calculation_Using_Web_Application/
 │
 ├── app/
 │ ├── main.py # FastAPI application
@@ -131,5 +131,5 @@ For each slot, **Min and Max values** are calculated.
 ### 1️⃣ Clone the Repository
 
 ```bash
-git clone https://github.com/your-repo/GSPCB_AQI_Web_App.git
-cd GSPCB_AQI_Web_App
+git clone https://github.com/UNICDEB/AQI_Calculation_Using_Web_Application.git
+cd AQI_Calculation_Using_Web_Application
